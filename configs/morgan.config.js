@@ -1,7 +1,14 @@
 const c = require('colors');
 const util = require('util');
 const objUtils = require('../utils/object.util');
+const fs = require('fs');
+const path = require('path');
+
 const SENT_KEY = 'sent';
+const LOG_DIR = 'logs';
+
+fs.existsSync(LOG_DIR) || fs.mkdirSync(LOG_DIR);
+var sentLogStream = fs.createWriteStream(path.join(`${__dirname}/../${LOG_DIR}/`, 'sent.log'), { flags: 'a' })
 
 module.exports.setup = (morgan) => {
     morgan.token('body', (req) => {
@@ -19,9 +26,11 @@ module.exports.setup = (morgan) => {
         const sent = objUtils.deepKeyFind(SENT_KEY, req.body);
         if (sent) {
             const current = Date.now().valueOf();
-            return c.blue(`[${current - Number(sent)}]`);
+            return current - Number(sent);
         }
     })
 };
 
 module.exports.log = ":method :url :status :sent :body"
+module.exports.streamLog = ":sent"
+module.exports.stream = sentLogStream

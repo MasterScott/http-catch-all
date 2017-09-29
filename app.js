@@ -8,6 +8,7 @@ const errorsRoutes = require('./routes/errors.route');
 
 loggerConfig.setup(logger);
 app.use(logger(loggerConfig.log));
+app.use(logger(loggerConfig.streamLog, { stream: loggerConfig.stream }));
 
 app.use(bodyParser.json());
 app.use(bodyParser.text());
